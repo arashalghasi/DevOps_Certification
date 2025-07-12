@@ -174,3 +174,79 @@ docker system prune -f
 # WARNING: To also remove unused volumes (which can cause data loss), add the --volumes flag.
 docker system prune -f --volumes
 ```
+
+# Essential Docker Commands: A Quick Reference
+
+This guide provides a quick reference for common Docker commands, focusing on managing containers, handling images, and transferring them for offline use.
+
+## Exporting & Importing Containers vs. Images
+
+A common point of confusion is how to move Docker assets. It's important to understand the difference between a container and an image.
+
+-   **Image:** A static, unchangeable blueprint containing an application and all its dependencies. Images are portable.
+-   **Container:** A running instance of an image. It has a stateful, writable filesystem layer. Containers themselves are not directly portable.
+
+Therefore, you cannot "transfer" a running container. Instead, you must first convert its state into an image.
+
+### Method 1: Creating an Image from a Container (Recommended)
+
+This method creates a new, fully-functional image from the current state of a container. This is the most common way to save changes you've made inside a container.
+
+```bash
+# Syntax: docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+# Example: Create a new image named 'my-app:v2' from the container 'my_running_app'
+docker commit my_running_app my-app:v2
+```
+
+### Method 2: Exporting a Container's Filesystem
+
+This creates a `.tar` archive of the container's filesystem. It does **not** include the image layers or metadata. This is useful for creating a base image from scratch.
+
+```bash
+# Export the container's filesystem to a tar file
+docker container export my_running_app > my_app_filesystem.tar
+
+# Import the filesystem to create a new, flat image
+cat my_app_filesystem.tar | docker import - my-new-base-image:latest
+```
+
+---
+
+## Managing Containers
+
+### Viewing Container Logs
+
+To inspect the output (stdout/stderr) of a container, use the `logs` command.
+
+```bash
+# View all logs for a specific container
+docker container logs <container_name_or_id>
+
+# Follow the log output in real-time (like 'tail -f')
+docker logs -f my_web_server
+
+# View the last 50 lines of the log
+docker logs --tail 50 my_web_server
+```
+
+### Monitoring Container Resource Usage
+
+To see a live stream of resource usage statistics (CPU, Memory, Network I/O) for your containers.
+
+```bash
+docker stats
+```
+
+### Cleaning Up Containers
+
+To remove stopped containers and free up disk space.
+
+```bash
+# Remove all stopped containers
+docker container prune
+```
+
+**Note:** The `prune` command will ask for confirmation. To bypass this, use the `-f` (force) flag.
+
+```bash
+# Force

@@ -28,14 +28,7 @@ docker inspect db-data
 
 ### run mysql service and check it
 ```bash
-docker run -d --name mysql --hostname mysql \
---network=wp-net --restart=always \
---mount=source=db-data,target=/var/lib/mysql \
--e MYSQL_ROOT_PASSWORD=sdvfsacsiojoijsaefawefmwervs \
--e MYSQL_DATABASE=DockerMe \
--e MYSQL_USER=DockerMe \
--e MYSQL_PASSWORD=sdvfsacsiojoijsaefawefmwervs \
-mysql:5.7
+docker run -d --name mysql --hostname mysql --network=wp-net --restart=always --mount=source=db-data,target=/var/lib/mysql -e MYSQL_ROOT_PASSWORD=sdvfsacsiojoijsaefawefmwervs -e MYSQL_DATABASE=DockerMe -e MYSQL_USER=DockerMe -e MYSQL_PASSWORD=sdvfsacsiojoijsaefawefmwervs mysql:5.7
 
 # check mysql services
 docker ps
@@ -46,14 +39,7 @@ docker exec -i mysql mysql -u root -psdvfsacsiojoijsaefawefmwervs  <<< "show dat
 
 ### run wordpress service and check it
 ```bash
-docker run -d --name wordpress --hostname wordpress \
---network=wp-net --restart=always \
---mount=source=wp-data,target=/var/www/html/ \
--e WORDPRESS_DB_PASSWORD=sdvfsacsiojoijsaefawefmwervs \
--e WORDPRESS_DB_HOST=mysql:3306 \
--e WORDPRESS_DB_USER=DockerMe \
--e WORDPRESS_DB_NAME=DockerMe \
-wordpress:latest
+docker run -d --name wordpress --hostname wordpress --network=wp-net --restart=always  --mount=source=wp-data,target=/var/www/html/  -e WORDPRESS_DB_PASSWORD=sdvfsacsiojoijsaefawefmwervs  -e WORDPRESS_DB_HOST=mysql:3306  -e WORDPRESS_DB_USER=DockerMe  -e WORDPRESS_DB_NAME=DockerMe  wordpress:latest
 
 # check wordpress services
 docker ps
@@ -73,7 +59,7 @@ tree ./nginx
 cat <<ROT > ./nginx/conf.d/wordpress.conf
 server {
   listen 443 ssl;
-  server_name wp.dockerme.ir;
+  server_name wp.arash.ir;
 
   # SSL
   ssl_certificate /etc/nginx/certs/cert.pem;
@@ -103,11 +89,7 @@ ROT
 CERT_LOCATION=./nginx/certs
 
 # generate key and cert
-openssl req -x509 -nodes -newkey \
-rsa:4096 -days 365 \
--keyout $CERT_LOCATION/key.pem \
--subj "/C=IR/ST=Iran/L=Tehran/O=DockerMe/OU=IT/CN=DockerMe.ir/emailAddress=rafiee1001@gmail.com" \
--out $CERT_LOCATION/cert.pem
+openssl req -x509 -nodes -newkey rsa:4096 -days 365  -keyout $CERT_LOCATION/key.pem  -subj "/C=IR/ST=Ira L=Tehran/O=DockerMe/OU=IT/CN=DockerMe.i emailAddress=rafiee1001@gmail.com"  -out $CERT_LOCATION/cert.pem
 
 # cehck certificate
 openssl x509 -text -noout -in $CERT_LOCATION/cert.pem
@@ -118,12 +100,7 @@ tree nginx
 
 ### run nginx services and check it
 ```bash
-docker run -d --name nginx --hostname nginx \
---network=wp-net --restart=always \
--v ${PWD}/nginx/conf.d:/etc/nginx/conf.d \
--v ${PWD}/nginx/certs:/etc/nginx/certs \
--p 80:80 -p 443:443 \
-nginx:latest
+docker run -d --name nginx --hostname nginx  --network=wp-net --restart=always  -v ${PWD}/nginx/conf.d:/etc/nginx/conf.d  -v ${PWD}/nginx/certs:/etc/nginx/certs  -p 80:80 -p 443:443  nginx:latest
 
 # check nginx services
 docker ps
