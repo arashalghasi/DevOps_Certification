@@ -9,7 +9,7 @@ In this lab you will play around with the container orchestration features of Do
 > **Time**: Approximately 30 minutes
 
 > **Tasks**:
->
+
 > * [Section #1 - What is Orchestration](#basics)
 > * [Section #2 - Configure Swarm Mode](#start-cluster)
 > * [Section #3 - Deploy applications across multiple hosts](#multi-application)
